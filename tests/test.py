@@ -15,6 +15,5 @@ if __name__ == '__main__':
     data_from_proto.deserialize_data(file_name)
 
     gen_code = GeneratingCode()
-    gen_code.gen_includes("main.cpp")
-    # gen_code.datagen_files_to_includes()
+    gen_code.generate_file("main.cpp")
 

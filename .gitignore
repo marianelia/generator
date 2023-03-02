@@ -5,6 +5,7 @@ src/__pycache__/
 
 #output for tests
 main.cpp
+tests/test
 
 # C extensions
 *.so

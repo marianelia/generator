@@ -24,9 +24,24 @@ class Data:
 
         file_obj = code_data_pb2.File()
         file_obj.ParseFromString(serialize_to_string)
-        print(file_obj.function_list)
-        print(file_obj.struct_list)
-        # for data_func in file_obj.function_list:
-            # self.add_data_from_func(data_func)
+        #print(file_obj.function_list)
+        #print(file_obj.struct_list)
+        for data_func in file_obj.function_list:
+            self.add_data_from_func(self.deserialize_func(data_func))
         # for data_struct ....
 
+    def deserialize_func(self, func_from_proto) -> DataFromFunc:
+        func = DataFromFunc()
+        for ns in func_from_proto.namespace:
+            func.set_namespace(ns)
+        
+        func.set_name(func_from_proto.name)
+        func.set_out_param(func_from_proto.output_param)
+        
+        for data_inp_param in func_from_proto.input_params:
+            func.set_inp_param(data_inp_param.name, data_inp_param.type)
+
+        func.print_for_tests()
+
+    def deserialize_input_params(self, param_from_proto) -> DataFromParam:
+        return DataFromParam(param_from_proto.name, param_from_proto.type)

@@ -4,7 +4,7 @@ from data_deserialize import *
 
 
 path_to_datagen_headers = "datagen/include/datagen"
-local_path_to_datagen_headers = "../" + path_to_datagen_headers
+local_path_to_datagen_headers = "../project/" + path_to_datagen_headers
 
 
 class GeneratingCode:

@@ -7,6 +7,9 @@ class Data:
         self.__list_data_struct :list[DataFromStruct] = []
         #...
 
+    def get_list_func(self):
+        return self.__list_data_func
+
     def add_data_from_func(self, data:DataFromFunc) -> None:
         self.__list_data_func.append(data)
     
@@ -40,8 +43,8 @@ class Data:
         
         for data_inp_param in func_from_proto.input_params:
             func.set_inp_param(data_inp_param.name, data_inp_param.type)
-
         func.print_for_tests()
+        # self.__list_data_func.append(func)
 
     def deserialize_input_params(self, param_from_proto) -> DataFromParam:
         return DataFromParam(param_from_proto.name, param_from_proto.type)

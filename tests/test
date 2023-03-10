@@ -7,8 +7,6 @@
 v2int"
 aint"
 b	long long"	
-t1int8
-ns2
-ns1tint"
+t1int	avoid.tint"
 arg1	long long"
 arg2	long long

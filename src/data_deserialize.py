@@ -38,11 +38,11 @@ class Data:
         for ns in func_from_proto.namespace:
             func.set_namespace(ns)
         
-        func.set_name(func_from_proto.name)
-        func.set_out_param(func_from_proto.output_param)
+        func.name = func_from_proto.name
+        func.output_param = func_from_proto.output_param
         
         for data_inp_param in func_from_proto.input_params:
-            func.set_inp_param(data_inp_param.name, data_inp_param.type)
+            func.set_inp_params(data_inp_param.name, data_inp_param.type)
         func.print_for_tests()
         # self.__list_data_func.append(func)
 

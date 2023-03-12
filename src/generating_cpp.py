@@ -24,7 +24,7 @@ class GeneratingCode:
 
     def gen_main(self) -> str:
         main_str = "int main() {"
-        for data_func in self.__data_headers.get_list_func():   #спрятать в get
+        for data_func in range(len(self.__data_headers.get_list_func())):   #спрятать в get
             data_func.print_for_tests()
 
             for inp_param in data_func.get_inp_params():

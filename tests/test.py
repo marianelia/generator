@@ -14,6 +14,6 @@ if __name__ == '__main__':
     data_from_proto = Data()
     data_from_proto.deserialize_data(file_name)
 
-    gen_code = GeneratingCode(data_from_proto)
-    gen_code.generate_file("main.cpp")
+    # gen_code = GeneratingCode(data_from_proto)
+    # gen_code.generate_file("main.cpp")
 

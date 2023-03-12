@@ -16,22 +16,15 @@ def generate_file(data:Data, path_to_file:str):
         # file.write(....)
 
 def gen_main(data:Data) -> str:
-    main_str = "int main() {"
-        
-        # !!!
-    # print(len(self.__data_headers.__list_data_func))
-    print(type(data.list_func[0]))
-        # !!!
-    for data_func in data.list_func:   #спрятать в get
-        print(type(data_func))
-        data_func.print_for_tests()
+    main_str = "int main() {\n"
 
+    for data_func in data.list_func:   #спрятать в get
         for inp_param in data_func.inp_params:
             main_str += gen_inp_param_func(inp_param)
         
         main_str += gen_func(data_func)
             
-    main_str +="}"
+    main_str +="\n}"
     return main_str
 
 def gen_func(func:DataFromFunc) -> str:

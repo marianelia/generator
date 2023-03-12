@@ -2,12 +2,13 @@ from classes_for_gen import *
 import code_data_pb2
 
 class Data:
-    def __init__(self) -> None:
-        self.__list_data_func :list[DataFromFunc] = []
-        self.__list_data_struct :list[DataFromStruct] = []
+    def __init__(self, list_data_func = [], list_data_struct = []) -> None:
+        self.__list_data_func :list[DataFromFunc] = list_data_func
+        self.__list_data_struct :list[DataFromStruct] = list_data_struct
         #...
 
-    def get_list_func(self):
+    @property
+    def list_func(self):
         return self.__list_data_func
 
     def add_data_from_func(self, data:DataFromFunc) -> None:
@@ -38,13 +39,14 @@ class Data:
         for ns in func_from_proto.namespace:
             func.set_namespace(ns)
         
-        func.set_name(func_from_proto.name)
-        func.set_out_param(func_from_proto.output_param)
+        func.name = func_from_proto.name
+        func.output_param = func_from_proto.output_param
         
         for data_inp_param in func_from_proto.input_params:
-            func.set_inp_param(data_inp_param.name, data_inp_param.type)
+            func.set_inp_params(data_inp_param.type, data_inp_param.name)
         func.print_for_tests()
         # self.__list_data_func.append(func)
+        return func
 
-    def deserialize_input_params(self, param_from_proto) -> DataFromParam:
-        return DataFromParam(param_from_proto.name, param_from_proto.type)
+    # def deserialize_input_params(self, param_from_proto) -> DataFromParam:
+    #     return DataFromParam(param_from_proto.name, param_from_proto.type)

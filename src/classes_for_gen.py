@@ -58,12 +58,11 @@ class DataFromVariable:
         self.__variable.print_for_tests()
 
 class DataFromFunc:
-    def __init__(self, namespaces = [], name="", output_param = "",
-                list_input_params = []) -> None:
-        self.__namespaces = namespaces
+    def __init__(self, name="", output_param = "") -> None:
+        self.__namespaces = []
         self.__name = name
         self.__output_param = output_param
-        self.__list_input_params = list_input_params
+        self.__list_input_params = []
 
     @property
     def namespaces(self) -> list:
@@ -72,6 +71,10 @@ class DataFromFunc:
     @namespaces.setter
     def namespaces(self, ns:str) -> None:
         self.__namespaces.append(ns)
+
+    @namespaces.deleter
+    def namespaces(self) -> None:
+        self.__namespaces = []
 
     @property
     def name(self) -> str:
@@ -96,6 +99,10 @@ class DataFromFunc:
     @list_input_params.setter
     def list_input_params(self, inp_type:str, inp_name:str):
         self.add_inp_param(inp_type, inp_name)
+
+    @list_input_params.deleter
+    def list_input_params(self):
+        self.__list_input_params = []
 
     def set_out_param_from_decl(self, out_param:str) -> None:
         self.__output_param = out_param.partition(' (')[0]
@@ -142,57 +149,76 @@ class DataFromMethod:
         self.__function.print_for_tests()
 
 
+
 class DataFromStruct:
-    def __init__(self, namespaces = [], name ="", defult_access = Access.NONE,
-                list_methods = [], list_variable = []) -> None:
-        self.__namespaces = namespaces
-        self.__name  = name
-        self.__default_access = defult_access
-        self.__list_methods = list_methods
-        self.__list_variable = list_variable
+    def __init__(self, namespaces = [], name = "", 
+                 default_access = Access.NONE, constructor = DataFromFunc()) -> None:
+        self.__namespaces  = namespaces
+        self.__name = name
+        self.__default_access = default_access
+        self.__list_methods :list[DataFromMethod] = []
+        self.__list_variable :list[DataFromVariable] = []
+        self.__constructor :DataFromFunc = constructor
 
-    # @property
-    # def access(self) -> Access:
-    #     return self.__default_access
+    def __del__(self):
+        del self.__namespaces
+        del self.__name
+        del self.__default_access
+        del self.__list_methods
+        del self.__list_variable
 
-    # @access.setter
-    # def access(self,access:Access) -> None:
-    #     self.__default_access = access
+    @property 
+    def constructor(self) -> DataFromFunc:
+        return self.__constructor
+    
+    @constructor.setter
+    def constructor(self, func:DataFromFunc):
+        self.__constructor = func
 
-    def get_access(self) -> Access:
+    @property
+    def access(self) -> Access:
         return self.__default_access
-
-    def set_access(self,access:Access) -> None:
+    
+    @access.setter
+    def access(self,access:Access) -> None:
         self.__default_access = access
     
+    @property
+    def namespaces(self) -> list:
+        return self.__namespaces
+
+    @namespaces.deleter
+    def namespaces(self):
+        self.__namespaces = []
+
     def set_namespace(self, ns:str) -> None:
         self.__namespaces.append(ns)
 
-    def set_name(self, name:str) -> None:
-        self.__name = name
-
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         return self.__name
     
-    def get_namespaces(self) -> list:
-        return self.__namespaces
+    @name.setter
+    def name(self, name:str) -> None:
+        self.__name = name
+
+    @property
+    def methods(self) -> list:
+        return self.__list_methods
 
     def set_method(self, access:str, func:DataFromFunc) -> None:
         method :DataFromMethod = DataFromMethod(access, func)
         self.__list_methods.append(method)
 
-    def get_methods(self) -> list:
-        return self.__list_methods
-
     def get_method_by_index(self, index:int) -> DataFromMethod:
         return self.__list_methods[index]
-
 
     def set_variable(self, access:str, var:DataFromParam) -> None:
         variable :DataFromVariable = DataFromVariable(access, var)
         self.__list_variable.append(variable)
 
-    def get_variable(self) -> list:
+    @property
+    def variables(self) -> list:
         return self.__list_variable
 
     def get_variable_by_index(self, index:int) -> DataFromVariable:

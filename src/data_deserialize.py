@@ -2,9 +2,9 @@ from classes_for_gen import *
 import code_data_pb2
 
 class Data:
-    def __init__(self, list_data_func = [], list_data_struct = []) -> None:
-        self.__list_data_func :list[DataFromFunc] = list_data_func
-        self.__list_data_struct :list[DataFromStruct] = list_data_struct
+    def __init__(self) -> None:
+        self.__list_data_func :list[DataFromFunc] = []
+        self.__list_data_struct :list[DataFromStruct] = []
         #...
 
     @property

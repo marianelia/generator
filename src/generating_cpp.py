@@ -28,7 +28,8 @@ def gen_main(data:Data) -> str:
     return main_str
 
 def gen_func(func:DataFromFunc) -> str:
-    gen_str:str = func.out_param + " output_" + func.name + " = "
+    gen_str = ""
+    gen_str = func.out_param + " output_" + func.name + " = "
     gen_str += gen_call_func(func)
     return gen_str
 
@@ -40,13 +41,16 @@ def gen_call_func(func:DataFromFunc) -> str:
     gen_str += func.name
     gen_str += "("
 
-    for inp_param in func.list_input_params:
-        gen_str += inp_param.type 
-        gen_str += " "
-        gen_str += inp_param.name
-        gen_str += ","
+    # del func.namespaces
+    if (len(func.list_input_params) > 0):
+        for inp_param in func.list_input_params:
+            gen_str += inp_param.type 
+            gen_str += " "
+            gen_str += inp_param.name
+            gen_str += ","
+        gen_str = gen_str[:-1]
 
-    gen_str = gen_str[:-1]
+    # del func.list_input_params
     gen_str += ");\n"
     return gen_str
 

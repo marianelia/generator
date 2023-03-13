@@ -10,6 +10,10 @@ class Data:
     @property
     def list_func(self):
         return self.__list_data_func
+    
+    @property
+    def list_struct(self):
+        return self.__list_data_struct
 
     def add_data_from_func(self, data:DataFromFunc) -> None:
         self.__list_data_func.append(data)
@@ -37,13 +41,14 @@ class Data:
     def deserialize_func(self, func_from_proto) -> DataFromFunc:
         func = DataFromFunc()
         for ns in func_from_proto.namespace:
-            func.set_namespace(ns)
+            # func.set_namespace(ns)
+            func.namespaces = ns
         
         func.name = func_from_proto.name
-        func.output_param = func_from_proto.output_param
+        func.out_param = func_from_proto.output_param
         
         for data_inp_param in func_from_proto.input_params:
-            func.set_inp_params(data_inp_param.type, data_inp_param.name)
+            func.add_inp_param(data_inp_param.type, data_inp_param.name)
         func.print_for_tests()
         # self.__list_data_func.append(func)
         return func

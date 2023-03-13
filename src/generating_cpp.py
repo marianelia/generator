@@ -19,7 +19,7 @@ def gen_main(data:Data) -> str:
     main_str = "int main() {\n"
 
     for data_func in data.list_func:   #спрятать в get
-        for inp_param in data_func.inp_params:
+        for inp_param in data_func.list_input_params:
             main_str += gen_inp_param_func(inp_param)
         
         main_str += gen_func(data_func)
@@ -28,7 +28,7 @@ def gen_main(data:Data) -> str:
     return main_str
 
 def gen_func(func:DataFromFunc) -> str:
-    gen_str:str = func.output_param + " output_" + func.name + " = "
+    gen_str:str = func.out_param + " output_" + func.name + " = "
     gen_str += gen_call_func(func)
     return gen_str
 
@@ -40,7 +40,7 @@ def gen_call_func(func:DataFromFunc) -> str:
     gen_str += func.name
     gen_str += "("
 
-    for inp_param in func.inp_params:
+    for inp_param in func.list_input_params:
         gen_str += inp_param.type 
         gen_str += " "
         gen_str += inp_param.name

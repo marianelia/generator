@@ -191,6 +191,10 @@ class DataFromStruct:
     def namespaces(self):
         self.__namespaces = []
 
+    @namespaces.setter
+    def namespaces(self, ns:str) -> None:
+        self.__namespaces.append(ns)
+
     def set_namespace(self, ns:str) -> None:
         self.__namespaces.append(ns)
 
@@ -227,7 +231,8 @@ class DataFromStruct:
     def print_for_tests(self)-> None:
         print(self.__namespaces)
         print(self.__name)
-        
+        self.__constructor.print_for_tests()
+
         for num_method in range(len(self.__list_methods)):
             self.__list_methods[num_method].print_for_tests()
 

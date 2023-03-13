@@ -32,11 +32,11 @@ class Data:
 
         file_obj = code_data_pb2.File()
         file_obj.ParseFromString(serialize_to_string)
-        #print(file_obj.function_list)
-        #print(file_obj.struct_list)
         for data_func in file_obj.function_list:
             self.add_data_from_func(self.deserialize_func(data_func))
-        # for data_struct ....
+
+        for data_struct in file_obj.struct_list:
+            self.add_data_from_struct(self.deserialize_struct(data_struct))
 
     def deserialize_func(self, func_from_proto) -> DataFromFunc:
         func = DataFromFunc()
@@ -49,9 +49,28 @@ class Data:
         
         for data_inp_param in func_from_proto.input_params:
             func.add_inp_param(data_inp_param.type, data_inp_param.name)
-        func.print_for_tests()
-        # self.__list_data_func.append(func)
+        # func.print_for_tests()
         return func
+    
+    def deserialize_struct(self, struct_from_proto) -> DataFromStruct:
+        struct = DataFromStruct()
+        for ns in struct_from_proto.namespace:
+            struct.namespaces = ns
 
-    # def deserialize_input_params(self, param_from_proto) -> DataFromParam:
-    #     return DataFromParam(param_from_proto.name, param_from_proto.type)
+        struct.name = struct_from_proto.name
+        struct.constructor = self.deserialize_func(struct_from_proto.constructor)
+
+        for method_proto in struct_from_proto.methods:
+            data_func = method_proto.function
+            struct.set_method(method_proto.access, self.deserialize_func(data_func))
+
+        for var_proto in struct_from_proto.variables:
+            param_proto = var_proto.variable
+            data_param = DataFromParam(param_proto.name, param_proto.type)
+            struct.set_variable(var_proto.access, data_param)
+
+        struct.print_for_tests()
+
+
+
+

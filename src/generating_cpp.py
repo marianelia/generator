@@ -44,8 +44,6 @@ def gen_call_func(func:DataFromFunc) -> str:
     # del func.namespaces
     if (len(func.list_input_params) > 0):
         for inp_param in func.list_input_params:
-            gen_str += inp_param.type 
-            gen_str += " "
             gen_str += inp_param.name
             gen_str += ","
         gen_str = gen_str[:-1]

@@ -73,7 +73,19 @@ def datagen_files_to_includes() -> str:
     include_datagen:str = ""
     for file in list_files:
         include_datagen = (include_datagen + "\n" + 
-                           "#include \"" + path_to_datagen_headers + "\\" + 
-                           file + "\"")
+                           "#include <datagen/" + 
+                           file + ">")
 
     return include_datagen
+
+# def datagen_files_to_includes() -> str:
+#     list_files = [file_name for file_name in listdir(local_path_to_datagen_headers) 
+#                      if isfile(join(local_path_to_datagen_headers, file_name))]
+
+#     include_datagen:str = ""
+#     for file in list_files:
+#         include_datagen = (include_datagen + "\n" + 
+#                            "#include \"" + path_to_datagen_headers + "/" + 
+#                            file + "\"")
+
+#     return include_datagen

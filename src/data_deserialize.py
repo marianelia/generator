@@ -50,8 +50,8 @@ class Data:
 
     def deserialize_func(self, func_from_proto) -> DataFromFunc:
         func = DataFromFunc()
+        del func.namespaces
         for ns in func_from_proto.namespace:
-            # func.set_namespace(ns)
             func.namespaces = ns
         
         func.name = func_from_proto.name
@@ -64,6 +64,7 @@ class Data:
     
     def deserialize_struct(self, struct_from_proto) -> DataFromStruct:
         struct = DataFromStruct()
+        del struct.namespaces
         for ns in struct_from_proto.namespace:
             struct.namespaces = ns
 
@@ -79,7 +80,8 @@ class Data:
             data_param = DataFromParam(param_proto.name, param_proto.type)
             struct.set_variable(var_proto.access, data_param)
 
-        struct.print_for_tests()
+        #struct.print_for_tests()
+        return struct
 
 
 

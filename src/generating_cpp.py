@@ -18,46 +18,105 @@ def generate_file(data:Data, path_to_file:str):
 def gen_main(data:Data) -> str:
     main_str = "int main() {\n"
 
-    for data_func in data.list_func:   #спрятать в get
-        for inp_param in data_func.list_input_params:
-            main_str += gen_inp_param_func(inp_param)
-        
-        main_str += gen_func(data_func)
-            
+    for data_func in data.list_func:
+        main_str += gen_func_data(data_func)
+
+    for data_struct in data.list_struct:
+        main_str += gen_struct_data(data_struct)
+
     main_str +="\n}"
     return main_str
 
-def gen_func(func:DataFromFunc) -> str:
-    gen_str = ""
-    if func.out_param != "void":
-        gen_str = func.out_param + " output_" + func.name + " = "
-    gen_str += gen_call_func(func)
-    return gen_str
+def gen_struct_data(data_struct:DataFromStruct)-> str:
+    struct_str =""
+    ptr_name = gen_name_ptr_to_struct(data_struct)
+    struct_str += gen_ptr_new_struct(data_struct, ptr_name)
+    # struct_str += get_methods(data_struct.methods, ptr_name)
 
-def gen_call_func(func:DataFromFunc) -> str:
-    gen_str = ""
-    for ns in func.namespaces:
-        gen_str += ns
-        gen_str += "::"
-    gen_str += func.name
-    gen_str += "("
+    #get variable - gen_inp_param_func
 
-    # del func.namespaces
-    if (len(func.list_input_params) > 0):
-        for inp_param in func.list_input_params:
-            gen_str += inp_param.name
-            gen_str += ","
-        gen_str = gen_str[:-1]
+    return struct_str
 
-    # del func.list_input_params
-    gen_str += ");\n"
-    return gen_str
+
+def gen_ptr_new_struct(data_struct:DataFromStruct, ptr_name:str) ->str:
+    struct_ptr = ""
+
+    for inp_param in data_struct.constructor.list_input_params:
+        struct_ptr += gen_inp_param_func(inp_param)
+
+    struct_ptr = (struct_ptr + gen_namespaces(data_struct.namespaces) + 
+                  data_struct.name + "* " + ptr_name + " = new ")
+    if data_struct.constructor.name == '':
+        struct_ptr = (struct_ptr + gen_namespaces(data_struct.namespaces) + 
+                      data_struct.name + "();")
+        return struct_ptr
+
+    struct_ptr += gen_call_constructor(data_struct)
+    return struct_ptr
+
+def gen_call_constructor(data_struct:DataFromStruct) -> str:
+    constr_str = ""
+    constr_str += gen_namespaces(data_struct.namespaces)
+    constr_str += data_struct.constructor.name
+    constr_str += "("
+    constr_str += gen_str_for_call_from_input_param(data_struct.constructor.list_input_params)
+    constr_str += ");\n"
+
+    return constr_str
+
+def gen_name_ptr_to_struct(data_struct:DataFromStruct) -> str:
+    return "ptr_" + data_struct.name
+
+def gen_func_data(data_func:DataFromFunc) -> str:
+    func_str = ""
+    for inp_param in data_func.list_input_params:
+        func_str += gen_inp_param_func(inp_param)
+        
+    func_str += gen_func_call(data_func)
+    return func_str
 
 def gen_inp_param_func(inp_param : DataFromParam): #rename
     gen_str = inp_param.type + " " + inp_param.name + "="
     gen_str += "datagen::random<" + inp_param.type + ">();\n"
     return gen_str
 
+def gen_func_call(func:DataFromFunc) -> str:
+    gen_str = ""
+    if func.out_param != "void":
+        gen_str = func.out_param + " output_" + func.name + " = "
+    gen_str += gen_call_func(func)
+    return gen_str
+
+
+def gen_namespaces(ns_list) -> str:
+    gen_str = ""
+    for ns in ns_list:
+        gen_str += ns
+        gen_str += "::"
+    return gen_str
+
+def gen_call_func(func:DataFromFunc) -> str:
+    gen_str = ""
+    # for ns in func.namespaces:
+    #     gen_str += ns
+    #     gen_str += "::"
+    gen_str += gen_namespaces(func.namespaces)
+    gen_str += func.name
+    gen_str += "("
+    gen_str += gen_str_for_call_from_input_param(func.list_input_params)
+
+    # del func.list_input_params
+    gen_str += ");\n"
+    return gen_str
+
+def gen_str_for_call_from_input_param(list_inp_params:DataFromParam) -> str:
+    gen_str = ""
+    if (len(list_inp_params) > 0):
+        for inp_param in list_inp_params:
+            gen_str += inp_param.name
+            gen_str += ","
+        gen_str = gen_str[:-1]
+    return gen_str
 
 def gen_includes(files_name) -> str:
     generate_string_for_file:str = ""

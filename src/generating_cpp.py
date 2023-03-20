@@ -7,7 +7,7 @@ path_to_datagen_headers = "datagen/include/datagen"
 local_path_to_datagen_headers = "../project/" + path_to_datagen_headers
 
 def generate_file(data:Data, path_to_file:str):
-    generating_includes = gen_includes()
+    generating_includes = gen_includes(data.files_name)
     generating_main = gen_main(data)
 
     with open(path_to_file, mode='w', encoding="utf-8") as file:
@@ -58,13 +58,26 @@ def gen_inp_param_func(inp_param : DataFromParam): #rename
     return gen_str
 
 
-def gen_includes() -> str:
+def gen_includes(files_name) -> str:
     generate_string_for_file:str = ""
     includes = datagen_files_to_includes()
-    generate_string_for_file  = (generate_string_for_file + includes + "\n")
+    includes_local = gen_includes_local_files(files_name)
+    generate_string_for_file  = (generate_string_for_file + includes + 
+                                 includes_local +"\n")
+
 
     #...
     return generate_string_for_file
+
+def gen_includes_local_files(files_name) -> str:
+    include_for_project = ""
+
+    include_for_project = (include_for_project + "\n" + 
+                           "#include <" + 
+                           files_name + ">")
+
+
+    return include_for_project
 
 def datagen_files_to_includes() -> str:
     list_files = [file_name for file_name in listdir(local_path_to_datagen_headers) 
@@ -77,15 +90,3 @@ def datagen_files_to_includes() -> str:
                            file + ">")
 
     return include_datagen
-
-# def datagen_files_to_includes() -> str:
-#     list_files = [file_name for file_name in listdir(local_path_to_datagen_headers) 
-#                      if isfile(join(local_path_to_datagen_headers, file_name))]
-
-#     include_datagen:str = ""
-#     for file in list_files:
-#         include_datagen = (include_datagen + "\n" + 
-#                            "#include \"" + path_to_datagen_headers + "/" + 
-#                            file + "\"")
-
-#     return include_datagen

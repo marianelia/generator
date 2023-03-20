@@ -2,10 +2,19 @@ from classes_for_gen import *
 import code_data_pb2
 
 class Data:
-    def __init__(self) -> None:
+    def __init__(self, files_name = "") -> None:
         self.__list_data_func :list[DataFromFunc] = []
         self.__list_data_struct :list[DataFromStruct] = []
+        self.__files_name:str = files_name #в дальнейшем list[str]
         #...
+
+    @property
+    def files_name(self):
+        return self.__files_name
+    
+    @files_name.setter
+    def files_name(self, file_name:str):
+        self.__files_name = file_name
 
     @property
     def list_func(self):
@@ -32,6 +41,7 @@ class Data:
 
         file_obj = code_data_pb2.File()
         file_obj.ParseFromString(serialize_to_string)
+        self.__files_name = file_obj.file_name
         for data_func in file_obj.function_list:
             self.add_data_from_func(self.deserialize_func(data_func))
 

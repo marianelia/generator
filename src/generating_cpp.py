@@ -29,7 +29,8 @@ def gen_main(data:Data) -> str:
 
 def gen_func(func:DataFromFunc) -> str:
     gen_str = ""
-    gen_str = func.out_param + " output_" + func.name + " = "
+    if func.out_param != "void":
+        gen_str = func.out_param + " output_" + func.name + " = "
     gen_str += gen_call_func(func)
     return gen_str
 

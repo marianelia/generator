@@ -10,7 +10,6 @@ root = str(pathlib.Path(sys.path[0]).resolve())
 file_name = root + '/test'
 
 if __name__ == '__main__':
-    print(file_name)
     data_from_proto = Data()
     data_from_proto.deserialize_data(file_name)
     

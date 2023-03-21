@@ -31,12 +31,18 @@ def gen_struct_data(data_struct:DataFromStruct)-> str:
     struct_str =""
     ptr_name = gen_name_ptr_to_struct(data_struct)
     struct_str += gen_ptr_new_struct(data_struct, ptr_name)
-    # struct_str += get_methods(data_struct.methods, ptr_name)
+    for method in data_struct.methods:
+        struct_str += gen_method(method, ptr_name)
 
     #get variable - gen_inp_param_func
 
     return struct_str
 
+def gen_method(data_method:DataFromMethod, ptr_name:str) -> str:
+    methods_str = ""
+    if data_method.access == 1:     #TODO понять,почему не получается применить Access.PUBLIC
+        methods_str += gen_func_data(data_method.function, ptr_name)
+    return methods_str
 
 def gen_ptr_new_struct(data_struct:DataFromStruct, ptr_name:str) ->str:
     struct_ptr = ""
@@ -67,12 +73,12 @@ def gen_call_constructor(data_struct:DataFromStruct) -> str:
 def gen_name_ptr_to_struct(data_struct:DataFromStruct) -> str:
     return "ptr_" + data_struct.name
 
-def gen_func_data(data_func:DataFromFunc) -> str:
+def gen_func_data(data_func:DataFromFunc, ptr_name_for_methods="") -> str:
     func_str = ""
     for inp_param in data_func.list_input_params:
         func_str += gen_inp_param_func(inp_param)
         
-    func_str += gen_func_call(data_func)
+    func_str += gen_func_call(data_func, ptr_name_for_methods)
     return func_str
 
 def gen_inp_param_func(inp_param : DataFromParam): #rename
@@ -80,13 +86,12 @@ def gen_inp_param_func(inp_param : DataFromParam): #rename
     gen_str += "datagen::random<" + inp_param.type + ">();\n"
     return gen_str
 
-def gen_func_call(func:DataFromFunc) -> str:
+def gen_func_call(func:DataFromFunc, ptr_name_for_methods="") -> str:
     gen_str = ""
     if func.out_param != "void":
         gen_str = func.out_param + " output_" + func.name + " = "
-    gen_str += gen_call_func(func)
+    gen_str += gen_name_func(func, ptr_name_for_methods)
     return gen_str
-
 
 def gen_namespaces(ns_list) -> str:
     gen_str = ""
@@ -95,12 +100,12 @@ def gen_namespaces(ns_list) -> str:
         gen_str += "::"
     return gen_str
 
-def gen_call_func(func:DataFromFunc) -> str:
+def gen_name_func(func:DataFromFunc, ptr_name_for_methods="") -> str:
     gen_str = ""
-    # for ns in func.namespaces:
-    #     gen_str += ns
-    #     gen_str += "::"
     gen_str += gen_namespaces(func.namespaces)
+    if ptr_name_for_methods != "":
+        gen_str += ptr_name_for_methods 
+        gen_str += "->"
     gen_str += func.name
     gen_str += "("
     gen_str += gen_str_for_call_from_input_param(func.list_input_params)

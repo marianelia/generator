@@ -90,7 +90,7 @@ def gen_func_call(func:DataFromFunc, ptr_name_for_methods="") -> str:
     gen_str = ""
     if func.out_param != "void":
         gen_str = func.out_param + " output_" + func.name + " = "
-    gen_str += gen_name_func(func, ptr_name_for_methods)
+        gen_str += gen_name_func(func, ptr_name_for_methods)
     return gen_str
 
 def gen_namespaces(ns_list) -> str:

@@ -14,7 +14,6 @@ if __name__ == '__main__':
     data_from_proto = Data()
     data_from_proto.deserialize_data(file_name)
 
-    
     generate_file(data_from_proto, "main.cpp")
     generate_cmake("main.cpp") # and other settings
 

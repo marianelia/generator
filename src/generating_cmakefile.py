@@ -39,7 +39,7 @@ class CMakeGen:
         cmake_file += self.__add_executable()
         cmake_file += self.__add_datagen_lib()
 
-        path_to_file += "/CMakeList.txt" # учитывать слэш
+        path_to_file += "/CMakeLists.txt" # учитывать слэш
         with open(path_to_file, mode='w', encoding="utf-8") as file:
             file.write(cmake_file)
 

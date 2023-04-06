@@ -8,7 +8,7 @@ import os
 path_to_datagen_headers = "datagen/include/datagen"
 local_path_to_datagen_headers = "../project/" + path_to_datagen_headers
 path_to_boost = "/usr/lib/x86_64-linux-gnu/cmake/Boost-1.71.0"
-path_to_project = str(pathlib.Path(sys.path[0]).resolve())
+path_to_project = str(pathlib.Path(sys.path[0]).resolve().parent) #временный
 
 
 class CMakeGen:
@@ -39,9 +39,9 @@ class CMakeGen:
         cmake_file += self.__add_executable()
         cmake_file += self.__add_datagen_lib()
 
-
+        path_to_file += "/CMakeList.txt" # учитывать слэш
         with open(path_to_file, mode='w', encoding="utf-8") as file:
-            file.write()
+            file.write(cmake_file)
 
     def __add_cmake_version(self) -> str:
         return "cmake_minimum_required(VERSION " + self.__cmake_version + ")\n"
@@ -63,15 +63,16 @@ class CMakeGen:
         for root, dirs, files in os.walk(path_to_project):
             for name in files:
                 if(name.endswith(".so")):
+                    print
                     return name
                 
         #exeption
 
     def __add_executable(self) -> str:
-        return "add_executable(" + self.__project_name + " ${SOURCE_FILES})"
+        return "add_executable(" + self.__project_name + " ${SOURCE_FILES})\n"
 
     def __add_datagen_lib(self) -> str:
-        return "target_include_directories(" + self.__project_name + " PRIVATE ${datagen_SOURCE_DIR}/include)" 
+        return "target_include_directories(" + self.__project_name + " PRIVATE ${datagen_SOURCE_DIR}/include)\n" 
 
 
 

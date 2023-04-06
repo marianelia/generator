@@ -15,6 +15,10 @@ if __name__ == '__main__':
     data_from_proto.deserialize_data(file_name)
 
     generate_file(data_from_proto, "main.cpp")
-    generate_cmake("main.cpp") # and other settings
+    # generate_cmake("main.cpp") # and other settings
+
+    cmake_file = CMakeGen("project", "3.6", "17")
+    cmake_file.generate_cmake("..")
+
 
     

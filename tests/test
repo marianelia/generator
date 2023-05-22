@@ -1,16 +1,0 @@
-
-§
-)/home/maria/diploma/parser/tests/test.hppÅ	TimePoint0,
-SetSecondsvoid"
-new_seconds	const intGetInSecondsint
-GetintIETranslateInSecondsvoid"
-hourint"
-minuteint"
-secondintTranslateFromSecondsint"
-secondsint*]	TimePointvoid"
-	new_hours	const int"
-new_minutes	const int"
-new_seconds	const int2
-comparatorbool"
-a	long long"
-b	long long

@@ -2,9 +2,12 @@ from os import listdir
 from os.path import isfile, join
 from data_deserialize import *
 
+PREFIX_FUNC = "ounput_"
+PREFIX_PTR = "ptr_"
 
-path_to_datagen_headers = "datagen/include/datagen"
-local_path_to_datagen_headers = "../project/" + path_to_datagen_headers
+
+# path_to_datagen_headers = "datagen/include/datagen"
+# local_path_to_datagen_headers = "../project/" + path_to_datagen_headers
 
 def generate_file(data:Data, path_to_file:str):
     generating_includes = gen_includes(data.files_name)
@@ -67,11 +70,20 @@ def gen_call_constructor(data_struct:DataFromStruct) -> str:
     constr_str += "("
     constr_str += gen_str_for_call_from_input_param(data_struct.constructor.list_input_params)
     constr_str += ");\n"
-
     return constr_str
 
+def add_cout_for_param(inp_param : DataFromParam):
+    cout_str = ("std::cout << " + "\"" + inp_param.name + 
+                " \"" + " << " +  inp_param.name  + " << \"" + r"\n" + "\";\n") 
+    return cout_str
+
+def add_cout_for_func(func:DataFromFunc):
+    cout_str = ("std::cout << " + "\"" + PREFIX_FUNC + func.name + 
+                " \"" + " << " +  PREFIX_FUNC + func.name  + " << \"" + r"\n" + "\";\n") 
+    return cout_str
+
 def gen_name_ptr_to_struct(data_struct:DataFromStruct) -> str:
-    return "ptr_" + data_struct.name
+    return PREFIX_PTR + data_struct.name
 
 def gen_func_data(data_func:DataFromFunc, ptr_name_for_methods="") -> str:
     func_str = ""
@@ -82,15 +94,20 @@ def gen_func_data(data_func:DataFromFunc, ptr_name_for_methods="") -> str:
     return func_str
 
 def gen_inp_param_func(inp_param : DataFromParam): #rename
+    is_const_param = inp_param.type.split()[0]
+    if is_const_param == "const":
+        inp_param.type = ''.join(inp_param.type.split()[1:])
     gen_str = inp_param.type + " " + inp_param.name + "="
     gen_str += "datagen::random<" + inp_param.type + ">();\n"
+    gen_str += add_cout_for_param(inp_param)
     return gen_str
 
 def gen_func_call(func:DataFromFunc, ptr_name_for_methods="") -> str:
     gen_str = ""
     if func.out_param != "void":
-        gen_str = func.out_param + " output_" + func.name + " = "
+        gen_str = func.out_param + " " + PREFIX_FUNC + func.name + " = "
         gen_str += gen_name_func(func, ptr_name_for_methods)
+        gen_str += add_cout_for_func(func)
     return gen_str
 
 def gen_namespaces(ns_list) -> str:
@@ -125,7 +142,9 @@ def gen_str_for_call_from_input_param(list_inp_params:DataFromParam) -> str:
 
 def gen_includes(files_name) -> str:
     generate_string_for_file:str = ""
-    includes = datagen_files_to_includes()
+    includes = "#include <iostream>\n"
+    includes += "#include <datagen/random.hpp>\n"
+    # includes = datagen_files_to_includes()
     includes_local = gen_includes_local_files(files_name)
     generate_string_for_file  = (generate_string_for_file + includes + 
                                  includes_local +"\n")
@@ -142,17 +161,18 @@ def gen_includes_local_files(files_name) -> str:
                                file + ">")
     return include_for_project
 
-def datagen_files_to_includes() -> str:
-    list_files = [file_name for file_name in listdir(local_path_to_datagen_headers) 
-                     if isfile(join(local_path_to_datagen_headers, file_name))]
+# def datagen_files_to_includes() -> str:
+#     list_files = [file_name for file_name in listdir(local_path_to_datagen_headers) 
+#                      if isfile(join(local_path_to_datagen_headers, file_name))]
 
-    include_datagen:str = ""
-    include_datagen += "#include <iostream>"
-    include_datagen  = include_datagen + "\n" + "#include <datagen/" +  "random.hpp" + ">"
+#     include_datagen:str = ""
+#     include_datagen += "#include <iostream>"
+#      include_datagen  = include_datagen + "\n" + "#include <datagen/" +  "random.hpp" + ">"
+#     # include_datagen  = include_datagen + "\n" + "#include <datagen/" +  "random.hpp" + ">"
 
-    # for file in list_files:
-    #     include_datagen = (include_datagen + "\n" + 
-    #                        "#include <datagen/" + 
-    #                        file + ">")
+#     # for file in list_files:
+#     #     include_datagen = (include_datagen + "\n" + 
+#     #                        "#include <datagen/" + 
+#     #                        file + ">")
 
-    return include_datagen
+#     return include_datagen

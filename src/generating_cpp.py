@@ -160,19 +160,3 @@ def gen_includes_local_files(files_name) -> str:
                                "#include <" + 
                                file + ">")
     return include_for_project
-
-# def datagen_files_to_includes() -> str:
-#     list_files = [file_name for file_name in listdir(local_path_to_datagen_headers) 
-#                      if isfile(join(local_path_to_datagen_headers, file_name))]
-
-#     include_datagen:str = ""
-#     include_datagen += "#include <iostream>"
-#      include_datagen  = include_datagen + "\n" + "#include <datagen/" +  "random.hpp" + ">"
-#     # include_datagen  = include_datagen + "\n" + "#include <datagen/" +  "random.hpp" + ">"
-
-#     # for file in list_files:
-#     #     include_datagen = (include_datagen + "\n" + 
-#     #                        "#include <datagen/" + 
-#     #                        file + ">")
-
-#     return include_datagen

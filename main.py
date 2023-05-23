@@ -8,22 +8,6 @@ from data_deserialize import Data
 from generating_cpp import *
 from generating_cmakefile import *
 
-# root = str(pathlib.Path(sys.path[0]).resolve())
-
-# file_name = root + '/test'
-
-# if __name__ == '__main__':
-#     data_from_proto = Data()
-#     data_from_proto.deserialize_data(file_name)
-
-#     generate_file(data_from_proto, "main.cpp")
-#     # generate_cmake("main.cpp") # and other settings
-
-#     cmake_file = CMakeGen("project", "3.6", "17")
-#     cmake_file.generate_cmake("..")
-
-
-
 if __name__ == '__main__':
     if len(sys.argv) < 2: # позже переделать на 2 аргумента с -log?
         raise ValueError('The path to the library is not set')
@@ -47,9 +31,7 @@ if __name__ == '__main__':
     if path_to_project[-1] != '/':
         path_to_project += '/'
 
-    print(path_to_project)
     proto_files_list = glob.glob(path_to_project + '*_proto')
-    print(proto_files_list)
     if len(proto_files_list) > 1:
         raise ValueError('Binary files with _proto more than one')
     proto_file_name = proto_files_list[0]

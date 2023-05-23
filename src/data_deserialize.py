@@ -41,13 +41,8 @@ class Data:
         project_obj = code_data_pb2.Project()
         project_obj.ParseFromString(serialize_to_string)
 
-        # print(project_obj)
-
         for file_obj in project_obj.files:
-            #print(len(file_obj))
-            #print(file_obj.path_to_file)
             self.files_name = file_obj.path_to_file
-            #print(self.files_name)
             for data_func in file_obj.function_list:
                 self.add_data_from_func(self.deserialize_func(data_func))
 

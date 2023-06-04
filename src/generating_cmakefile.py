@@ -4,6 +4,7 @@ CMakeList.txt для тестов: создание внутреннего и ht
 import sys
 import pathlib
 import os
+from enum import Enum
 
 CMAKE_LIST_TXT = "CMakeLists.txt"
 path_to_boost = "/usr/lib/x86_64-linux-gnu/cmake/Boost-1.71.0"
@@ -11,13 +12,18 @@ path_to_boost = "/usr/lib/x86_64-linux-gnu/cmake/Boost-1.71.0"
 
 
 class CMakeGen:
+    class Mode(Enum):
+        NONE = 1
+        TEST = 2
+
     def __init__(self, project_name:str, path_to_file:str,
-                  cmake_version:str, cxx_standard:str, library_name:str) -> None:
+                  cmake_version:str, cxx_standard:str, library_name:str, mode:Mode=Mode.NONE) -> None:
         self.__project_name = project_name
         self.__cmake_version = cmake_version
         self.__cxx_standard = cxx_standard
         self.__path_to_file = path_to_file
         self.__library_name = library_name
+        self.__mode = mode
         #путь к глобальному CMakeLisxt
 
     @property
@@ -40,8 +46,16 @@ class CMakeGen:
     def library_name(self):
         return self.__library_name
     
+    @property
+    def mode(self):
+        return self.__mode
 
     def generate_cmake_lists(self):
+        self.generate_local_cmake()
+        self.change_path_in_global_cmake_list()
+
+
+    def generate_cmake_lists_with_gtest(self):
         self.generate_local_cmake()
         self.change_path_in_global_cmake_list()
 
@@ -56,6 +70,8 @@ class CMakeGen:
         cmake_file += "option(BUILD_SHARED_LIBS \"Build using shared libraries\" ON)\n"
         cmake_file += self.__target_include_dir_for_datagen()
         cmake_file += self.__add_imported_library(self.library_name, "SHARED")
+        if self.mode == self.Mode.TEST:
+            cmake_file += self.__add_gtest()
         cmake_file += self.__add_defined_boost()
 
         path_to_file_with_cmake_list = self.path_to_file
@@ -64,6 +80,14 @@ class CMakeGen:
         path_to_file_with_cmake_list += CMAKE_LIST_TXT # учитывать слэш
         with open(path_to_file_with_cmake_list, mode='w', encoding="utf-8") as file:
             file.write(cmake_file)
+
+    def __add_gtest(self):
+        cmake_file = "enable_testing()\n"
+        cmake_file += "find_package(GTest REQUIRED)\n"
+        cmake_file += "include_directories(${GTEST_INCLUDE_DIRS})\n"
+        cmake_file += "target_link_libraries(project gtest pthread)\n"
+        return cmake_file
+
 
     def generate_global_cmake_file(self): #костыльно,но тут неизменяемые строки
         cmake_file = ""

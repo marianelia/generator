@@ -65,8 +65,10 @@ if __name__ == '__main__':
     if mode == Mode.NONE:
         generate_file(data_from_proto, path_to_project + cpp_file_name)
         #generate_cmake("main.cpp") # and other settings
-        cmake_file = CMakeGen(project_name, path_to_project, "3.6", "17", library_name[0])
+        cmake_file = CMakeGen(project_name, path_to_project, "3.6", "17", library_name[0], CMakeGen.Mode.TEST)
         cmake_file.generate_cmake_lists()
 
     elif mode == Mode.TEST:
         generate_file_with_tests(data_from_proto, path_to_project + cpp_file_name, cpp_file_name)
+        cmake_file = CMakeGen(project_name, path_to_project, "3.6", "17", library_name[0], CMakeGen.Mode.TEST)
+        cmake_file.generate_cmake_lists()

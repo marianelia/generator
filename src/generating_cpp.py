@@ -51,7 +51,10 @@ def gen_tests_for_struct(data_struct:DataFromStruct, name_testcase):
     test_str = "TEST(" + name_testcase + ", " + data_struct.name  + ") {\n"
     ptr_name = gen_name_ptr_to_struct(data_struct)
     test_str += gen_ptr_new_struct(data_struct, ptr_name)
-    # methods
+    for method in data_struct.methods:
+        if method.access == 1:
+            test_str += gen_func_data_with_expect_eq(method.function, ptr_name)
+    test_str += "}\n"
     return test_str
 
 def gen_tests_for_func(func:DataFromFunc, name_testcase, ptr_name_for_methods=""):
@@ -62,21 +65,21 @@ def gen_tests_for_func(func:DataFromFunc, name_testcase, ptr_name_for_methods=""
 
 def gen_func_data_with_expect_eq(data_func:DataFromFunc, ptr_name_for_methods=""):
     test_str = ""
-    for inp_param in data_func.list_input_params:
-        test_str += gen_inp_param_func(inp_param)
-    test_str += gen_func_call(data_func, ptr_name_for_methods)
-    test_str += gen_expected_out_func(data_func)
-    test_str += ("EXPECT_EQ(" + gen_name_output(data_func.name) + ", " +
-                 gen_name_expected(data_func.name) + ");\n")
+    if data_func.out_param != "void":
+        for inp_param in data_func.list_input_params:
+            test_str += gen_inp_param_func(inp_param)
+        test_str += gen_func_call(data_func, ptr_name_for_methods)
+        test_str += gen_expected_out_func(data_func)
+        test_str += ("EXPECT_EQ(" + gen_name_output(data_func.name) + ", " +
+                     gen_name_expected(data_func.name) + ");\n")
     return test_str
 
 def gen_expected_out_func(data_func:DataFromFunc):
-    print(data_func.out_param )
-    expected_str = ("" + data_func.out_param + " " + gen_name_expected(data_func.name) +
-                    " = datagen::random<" + data_func.out_param + ">();\n")
+    expected_str = ""
+    expected_str += ("" + data_func.out_param + " " + gen_name_expected(data_func.name) +
+                     " = datagen::random<" + data_func.out_param + ">();\n")
     expected_str += add_cout(gen_name_expected(data_func.name))
     return expected_str
-
 
 def gen_name_output(name:str) -> str:
     return PREFIX_FUNC + name

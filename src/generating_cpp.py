@@ -2,7 +2,8 @@ from os import listdir
 from os.path import isfile, join
 from data_deserialize import *
 
-PREFIX_FUNC = "ounput_"
+PREFIX_FUNC = "output_"
+PRIFIX_GEN_EXPECTED = "expected_"
 PREFIX_PTR = "ptr_"
 
 
@@ -17,6 +18,74 @@ def generate_file(data:Data, path_to_file:str):
         file.write(generating_includes)
         file.write(generating_main)
         # file.write(....)
+
+
+def generate_file_with_tests(data:Data, path_to_file:str, name_testcase):
+    generating_includes = gen_includes(data.files_name)
+    generating_includes += add_gtest()
+    generating_tests = gen_tests(data, name_testcase)
+    generating_main = gen_main_for_gtest() 
+
+    with open(path_to_file, mode='w', encoding="utf-8") as file:
+        file.write(generating_includes)
+        file.write(generating_tests)
+        file.write(generating_main)
+
+def add_gtest() -> str:
+    return "#include <gtest/gtest.h>\n"
+
+def gen_main_for_gtest() -> str:
+    return ('int main(int argc, char **argv) {\n' + 
+            '::testing::InitGoogleTest(&argc, argv);\n' +
+            'return RUN_ALL_TESTS();\n}')
+
+def gen_tests(data:Data, name_testcase:str) -> str:
+    test_str=""
+    for data_func in data.list_func:
+        test_str += gen_tests_for_func(data_func, name_testcase)
+    for data_struct in data.list_struct:
+        test_str += gen_tests_for_struct(data_struct, name_testcase)
+    return test_str
+
+def gen_tests_for_struct(data_struct:DataFromStruct, name_testcase):
+    test_str = "TEST(" + name_testcase + ", " + data_struct.name  + ") {\n"
+    ptr_name = gen_name_ptr_to_struct(data_struct)
+    test_str += gen_ptr_new_struct(data_struct, ptr_name)
+    # methods
+    return test_str
+
+def gen_tests_for_func(func:DataFromFunc, name_testcase, ptr_name_for_methods=""):
+    test_str = "TEST(" + name_testcase + ", " + func.name  + ") {\n"
+    test_str += gen_func_data_with_expect_eq(func, ptr_name_for_methods)
+    test_str += "}\n"
+    return test_str
+
+def gen_func_data_with_expect_eq(data_func:DataFromFunc, ptr_name_for_methods=""):
+    test_str = ""
+    for inp_param in data_func.list_input_params:
+        test_str += gen_inp_param_func(inp_param)
+    test_str += gen_func_call(data_func, ptr_name_for_methods)
+    test_str += gen_expected_out_func(data_func)
+    test_str += ("EXPECT_EQ(" + gen_name_output(data_func.name) + ", " +
+                 gen_name_expected(data_func.name) + ");\n")
+    return test_str
+
+def gen_expected_out_func(data_func:DataFromFunc):
+    print(data_func.out_param )
+    expected_str = ("" + data_func.out_param + " " + gen_name_expected(data_func.name) +
+                    " = datagen::random<" + data_func.out_param + ">();\n")
+    expected_str += add_cout(gen_name_expected(data_func.name))
+    return expected_str
+
+
+def gen_name_output(name:str) -> str:
+    return PREFIX_FUNC + name
+
+def gen_name_expected(name:str) -> str:
+    return PRIFIX_GEN_EXPECTED + name
+
+def gen_name_ptr_to_struct(data_struct:DataFromStruct) -> str:
+    return PREFIX_PTR + data_struct.name
 
 def gen_main(data:Data) -> str:
     main_str = "int main() {\n"
@@ -72,18 +141,20 @@ def gen_call_constructor(data_struct:DataFromStruct) -> str:
     constr_str += ");\n"
     return constr_str
 
-def add_cout_for_param(inp_param : DataFromParam):
+def add_cout_for_param(inp_param : DataFromParam): # delete
     cout_str = ("std::cout << " + "\"" + inp_param.name + 
                 " \"" + " << " +  inp_param.name  + " << \"" + r"\n" + "\";\n") 
     return cout_str
 
-def add_cout_for_func(func:DataFromFunc):
+def add_cout_for_func(func:DataFromFunc): # delete
     cout_str = ("std::cout << " + "\"" + PREFIX_FUNC + func.name + 
                 " \"" + " << " +  PREFIX_FUNC + func.name  + " << \"" + r"\n" + "\";\n") 
     return cout_str
 
-def gen_name_ptr_to_struct(data_struct:DataFromStruct) -> str:
-    return PREFIX_PTR + data_struct.name
+def add_cout(unit:str) -> str:
+    return ("std::cout << " + "\"" + unit + 
+            " \"" + " << " +  unit  + " << \"" + r"\n" + "\";\n") 
+
 
 def gen_func_data(data_func:DataFromFunc, ptr_name_for_methods="") -> str:
     func_str = ""

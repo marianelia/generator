@@ -1,4 +1,4 @@
-from classes_for_gen import *
+from data_units import *
 import code_data_pb2
 
 class Data:
